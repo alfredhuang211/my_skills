@@ -112,36 +112,191 @@ class ARDiagnostic:
             return Pattern.PERSISTENT
 
     @staticmethod
-    def differential_diagnosis(symptoms_dict: Dict) -> List[str]:
+    def differential_diagnosis(symptoms_dict: Dict) -> Dict:
         """
-        鉴别诊断
+        鉴别诊断 - 逐步排除其他疾病
         
         Args:
-            symptoms_dict: 症状字典
+            symptoms_dict: 症状字典，包含各种鉴别点
         
         Returns:
-            可能的其他诊断列表
+            诊断结果字典，包含排除情况和建议
         """
-        alerts = []
+        result = {
+            "excluded_diseases": [],  # 已排除的疾病
+            "suspected_diseases": [],  # 疑似的其他疾病
+            "can_proceed_to_ar": False,  # 是否可以继续过敏性鼻炎诊断
+            "suggestions": []  # 建议
+        }
         
-        # 感冒
-        if (symptoms_dict.get('has_fever') or 
-            symptoms_dict.get('sore_throat') or
-            symptoms_dict.get('yellow_discharge')):
-            alerts.append("⚠️ 症状提示可能为感冒，病程短（7-10天），可能伴咽痛、发热、黄涕")
+        # 第一步：排除感冒（急性上呼吸道感染）
+        cold_score = 0
+        cold_signs = []
         
-        # 鼻窦炎
-        if (symptoms_dict.get('purulent_discharge') or
-            symptoms_dict.get('facial_pain') or
-            symptoms_dict.get('loss_of_smell')):
-            alerts.append("⚠️ 症状提示可能为鼻窦炎，黄/绿脓涕、面颊痛、嗅觉下降")
+        if symptoms_dict.get('duration_days', 999) <= 10:
+            cold_score += 2
+            cold_signs.append("病程<10天")
         
-        # 血管运动性鼻炎
-        if (symptoms_dict.get('cold_air_trigger') and
-            not symptoms_dict.get('significant_itch')):
-            alerts.append("⚠️ 可能为血管运动性鼻炎，诱因以冷空气、气味、体位变化为主，无明显鼻痒")
+        if symptoms_dict.get('has_fever'):
+            cold_score += 2
+            cold_signs.append("发热")
         
-        return alerts
+        if symptoms_dict.get('sore_throat'):
+            cold_score += 1
+            cold_signs.append("咽痛")
+        
+        if symptoms_dict.get('yellow_discharge'):
+            cold_score += 1
+            cold_signs.append("黄涕")
+        
+        if symptoms_dict.get('body_ache'):
+            cold_score += 1
+            cold_signs.append("全身酸痛")
+        
+        if cold_score >= 3:
+            result["suspected_diseases"].append({
+                "name": "感冒（急性上呼吸道感染）",
+                "confidence": "高" if cold_score >= 4 else "中",
+                "signs": cold_signs,
+                "suggestion": (
+                    "根据您的症状，更像是感冒。建议：\n"
+                    "1. 多休息、多喝水\n"
+                    "2. 症状通常7-10天内自然缓解\n"
+                    "3. 如持续不愈或加重，请就医\n"
+                    "4. 可对症处理：发热可服用退热药，咽痛可含服咽喉片"
+                )
+            })
+            return result
+        else:
+            result["excluded_diseases"].append("感冒（病程长/无发热/无黄涕）")
+        
+        # 第二步：排除鼻窦炎
+        sinusitis_score = 0
+        sinusitis_signs = []
+        
+        if symptoms_dict.get('purulent_discharge'):
+            sinusitis_score += 3
+            sinusitis_signs.append("脓性鼻涕（黄/绿）")
+        
+        if symptoms_dict.get('facial_pain'):
+            sinusitis_score += 2
+            sinusitis_signs.append("面部/面颊疼痛")
+        
+        if symptoms_dict.get('loss_of_smell'):
+            sinusitis_score += 2
+            sinusitis_signs.append("嗅觉明显下降")
+        
+        if symptoms_dict.get('has_fever'):
+            sinusitis_score += 1
+            sinusitis_signs.append("发热")
+        
+        if symptoms_dict.get('headache'):
+            sinusitis_score += 1
+            sinusitis_signs.append("头痛")
+        
+        if sinusitis_score >= 4:
+            result["suspected_diseases"].append({
+                "name": "鼻窦炎（急性/慢性）",
+                "confidence": "高" if sinusitis_score >= 6 else "中",
+                "signs": sinusitis_signs,
+                "suggestion": (
+                    "您的症状提示可能为鼻窦炎，建议：\n"
+                    "1. 前往耳鼻喉科就诊\n"
+                    "2. 可能需要抗生素治疗\n"
+                    "3. 必要时需要CT检查明确诊断\n"
+                    "4. 不建议自行用药"
+                )
+            })
+            return result
+        else:
+            result["excluded_diseases"].append("鼻窦炎（无脓涕/无面部疼痛）")
+        
+        # 第三步：排除血管运动性鼻炎
+        vasomotor_score = 0
+        vasomotor_signs = []
+        
+        if symptoms_dict.get('cold_air_trigger'):
+            vasomotor_score += 2
+            vasomotor_signs.append("冷空气诱发")
+        
+        if symptoms_dict.get('odor_trigger'):
+            vasomotor_score += 2
+            vasomotor_signs.append("刺激性气味诱发")
+        
+        if symptoms_dict.get('position_trigger'):
+            vasomotor_score += 1
+            vasomotor_signs.append("体位变化诱发")
+        
+        if not symptoms_dict.get('significant_itch', True):
+            vasomotor_score += 2
+            vasomotor_signs.append("鼻痒不明显")
+        
+        if not symptoms_dict.get('has_allergen'):
+            vasomotor_score += 1
+            vasomotor_signs.append("无明确过敏原")
+        
+        if vasomotor_score >= 4:
+            result["suspected_diseases"].append({
+                "name": "血管运动性鼻炎",
+                "confidence": "高" if vasomotor_score >= 5 else "中",
+                "signs": vasomotor_signs,
+                "suggestion": (
+                    "您的症状可能是血管运动性鼻炎，建议：\n"
+                    "1. 避免诱因（冷空气、刺激性气味、温度骤变）\n"
+                    "2. 可使用鼻用糖皮质激素\n"
+                    "3. 生理盐水鼻腔冲洗\n"
+                    "4. 如症状严重，建议耳鼻喉科就诊"
+                )
+            })
+            return result
+        else:
+            result["excluded_diseases"].append("血管运动性鼻炎（鼻痒明显/有明确过敏原）")
+        
+        # 第四步：确认过敏性鼻炎特征
+        ar_score = 0
+        ar_signs = []
+        
+        if symptoms_dict.get('has_sneeze'):
+            ar_score += 1
+            ar_signs.append("频繁打喷嚏")
+        
+        if symptoms_dict.get('has_clear_discharge'):
+            ar_score += 1
+            ar_signs.append("清水样鼻涕")
+        
+        if symptoms_dict.get('significant_itch'):
+            ar_score += 2
+            ar_signs.append("明显鼻痒")
+        
+        if symptoms_dict.get('has_nasal_congestion'):
+            ar_score += 1
+            ar_signs.append("鼻塞")
+        
+        if symptoms_dict.get('recurrent'):
+            ar_score += 1
+            ar_signs.append("反复发作")
+        
+        if symptoms_dict.get('has_allergen'):
+            ar_score += 2
+            ar_signs.append("有明确过敏原")
+        
+        if ar_score >= 5:
+            result["can_proceed_to_ar"] = True
+            result["suggestions"].append(
+                "✅ 已排除感冒、鼻窦炎、血管运动性鼻炎\n"
+                "✅ 症状符合过敏性鼻炎特征\n"
+                "→ 可以进入TNSS评分和治疗方案制定"
+            )
+        else:
+            result["suggestions"].append(
+                "⚠️ 症状不典型，无法明确诊断\n"
+                "建议：\n"
+                "1. 转人工问诊服务（由执业医师评估）\n"
+                "2. 前往线下耳鼻喉科就诊\n"
+                "3. 可能需要过敏原检测、鼻镜检查等进一步检查"
+            )
+        
+        return result
 
 
 class TreatmentPlanner:
@@ -424,52 +579,151 @@ class DangerSignalDetector:
 
 # 使用示例
 if __name__ == "__main__":
-    # 示例1：中度持续性过敏性鼻炎患者
+    # 示例1：鉴别诊断 - 感冒
     print("=" * 80)
-    print("示例1：中度持续性过敏性鼻炎")
+    print("示例1：鉴别诊断 - 疑似感冒")
     print("=" * 80)
     
-    symptoms = Symptoms(
-        sneeze=2,  # 6-10个/天
-        rhinorrhea=2,  # 6-10次擦拭/天
-        nasal_itch=1,  # 偶尔痒
-        nasal_congestion=2  # 白天也堵
-    )
+    cold_symptoms = {
+        'duration_days': 3,
+        'has_fever': True,
+        'sore_throat': True,
+        'yellow_discharge': False,
+        'body_ache': True,
+        'has_sneeze': True,
+        'has_clear_discharge': False
+    }
     
-    tnss = symptoms.calculate_tnss()
-    print(f"TNSS评分: {tnss}分")
+    diff_result = ARDiagnostic.differential_diagnosis(cold_symptoms)
     
-    severity = ARDiagnostic.classify_severity(tnss)
-    print(f"严重程度: {severity.value}")
+    if diff_result["suspected_diseases"]:
+        print("\n🔍 鉴别诊断结果:")
+        for disease in diff_result["suspected_diseases"]:
+            print(f"\n疑似疾病: {disease['name']}")
+            print(f"可信度: {disease['confidence']}")
+            print(f"支持症状: {', '.join(disease['signs'])}")
+            print(f"\n建议:\n{disease['suggestion']}")
     
-    disease_course = DiseaseCourse(days_per_week=5, duration_weeks=6)
-    pattern = ARDiagnostic.classify_pattern(disease_course)
-    print(f"病程分型: {pattern.value}")
-    
-    patient = PatientInfo(
-        age=35,
-        has_asthma=True
-    )
-    
-    plan = TreatmentPlanner.generate_treatment_plan(severity, pattern, patient, symptoms)
-    
-    print("\n治疗方案:")
-    print("主要用药:")
-    for med in plan["primary_medications"]:
-        print(f"  • {med}")
-    
-    print("\n辅助治疗:")
-    for adj in plan["adjunct_therapies"]:
-        print(f"  • {adj}")
-    
-    if plan["warnings"]:
-        print("\n⚠️  警告:")
-        for warning in plan["warnings"]:
-            print(f"  {warning}")
-    
-    # 示例2：孕妇患者
+    # 示例2：鉴别诊断 - 鼻窦炎
     print("\n" + "=" * 80)
-    print("示例2：孕妇（中度）")
+    print("示例2：鉴别诊断 - 疑似鼻窦炎")
+    print("=" * 80)
+    
+    sinusitis_symptoms = {
+        'duration_days': 15,
+        'purulent_discharge': True,
+        'facial_pain': True,
+        'loss_of_smell': True,
+        'has_fever': True,
+        'headache': True
+    }
+    
+    diff_result = ARDiagnostic.differential_diagnosis(sinusitis_symptoms)
+    
+    if diff_result["suspected_diseases"]:
+        print("\n🔍 鉴别诊断结果:")
+        for disease in diff_result["suspected_diseases"]:
+            print(f"\n疑似疾病: {disease['name']}")
+            print(f"可信度: {disease['confidence']}")
+            print(f"支持症状: {', '.join(disease['signs'])}")
+            print(f"\n建议:\n{disease['suggestion']}")
+    
+    # 示例3：鉴别诊断 - 血管运动性鼻炎
+    print("\n" + "=" * 80)
+    print("示例3：鉴别诊断 - 疑似血管运动性鼻炎")
+    print("=" * 80)
+    
+    vasomotor_symptoms = {
+        'duration_days': 60,
+        'cold_air_trigger': True,
+        'odor_trigger': True,
+        'significant_itch': False,
+        'has_allergen': False,
+        'has_sneeze': True,
+        'has_nasal_congestion': True
+    }
+    
+    diff_result = ARDiagnostic.differential_diagnosis(vasomotor_symptoms)
+    
+    if diff_result["suspected_diseases"]:
+        print("\n🔍 鉴别诊断结果:")
+        for disease in diff_result["suspected_diseases"]:
+            print(f"\n疑似疾病: {disease['name']}")
+            print(f"可信度: {disease['confidence']}")
+            print(f"支持症状: {', '.join(disease['signs'])}")
+            print(f"\n建议:\n{disease['suggestion']}")
+    
+    # 示例4：确诊过敏性鼻炎 - 完整流程
+    print("\n" + "=" * 80)
+    print("示例4：过敏性鼻炎完整诊断流程")
+    print("=" * 80)
+    
+    ar_symptoms_dict = {
+        'duration_days': 30,
+        'has_sneeze': True,
+        'has_clear_discharge': True,
+        'significant_itch': True,
+        'has_nasal_congestion': True,
+        'recurrent': True,
+        'has_allergen': True,
+        'has_fever': False,
+        'purulent_discharge': False,
+        'cold_air_trigger': False
+    }
+    
+    print("\n【第一步】鉴别诊断排除:")
+    diff_result = ARDiagnostic.differential_diagnosis(ar_symptoms_dict)
+    
+    print(f"已排除疾病: {', '.join(diff_result['excluded_diseases'])}")
+    
+    if diff_result["can_proceed_to_ar"]:
+        print("\n✅ 确认为过敏性鼻炎，进入评分流程\n")
+        
+        print("【第二步】TNSS评分:")
+        symptoms = Symptoms(
+            sneeze=2,  # 6-10个/天
+            rhinorrhea=2,  # 6-10次擦拭/天
+            nasal_itch=2,  # 经常痒
+            nasal_congestion=2  # 白天也堵
+        )
+        
+        tnss = symptoms.calculate_tnss()
+        print(f"TNSS评分: {tnss}分")
+        
+        severity = ARDiagnostic.classify_severity(tnss)
+        print(f"严重程度: {severity.value}")
+        
+        disease_course = DiseaseCourse(days_per_week=5, duration_weeks=6)
+        pattern = ARDiagnostic.classify_pattern(disease_course)
+        print(f"病程分型: {pattern.value}")
+        
+        print("\n【第三步】生成治疗方案:")
+        patient = PatientInfo(
+            age=35,
+            has_asthma=True
+        )
+        
+        plan = TreatmentPlanner.generate_treatment_plan(severity, pattern, patient, symptoms)
+        
+        print("\n主要用药:")
+        for med in plan["primary_medications"]:
+            print(f"  • {med}")
+        
+        print("\n辅助治疗:")
+        for adj in plan["adjunct_therapies"]:
+            print(f"  • {adj}")
+        
+        if plan["warnings"]:
+            print("\n⚠️  警告:")
+            for warning in plan["warnings"]:
+                print(f"  {warning}")
+    else:
+        for suggestion in diff_result["suggestions"]:
+            print(f"\n{suggestion}")
+    
+    # 示例5：孕妇患者
+    print("\n" + "=" * 80)
+    print("示例5：特殊人群 - 孕妇（中度持续性）")
     print("=" * 80)
     
     pregnant_patient = PatientInfo(
@@ -488,16 +742,21 @@ if __name__ == "__main__":
     for med in pregnancy_plan["primary_medications"]:
         print(f"  • {med}")
     
-    # 示例3：危险信号检测
+    if pregnancy_plan["warnings"]:
+        print("\n⚠️  特别提示:")
+        for warning in pregnancy_plan["warnings"]:
+            print(f"  {warning}")
+    
+    # 示例6：危险信号检测
     print("\n" + "=" * 80)
-    print("示例3：危险信号检测")
+    print("示例6：危险信号检测")
     print("=" * 80)
     
     danger_input = "我现在呼吸困难，胸闷，喘不过气"
     signals = DangerSignalDetector.check_danger_signals(danger_input)
     
     if signals:
-        print("⚠️  检测到危险信号:")
+        print("🚨 检测到危险信号:")
         for signal in signals:
             print(f"  {signal['action']}")
     else:
