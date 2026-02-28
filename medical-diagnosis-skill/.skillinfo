@@ -1,0 +1,221 @@
+# Medical Diagnosis Assistant Skill Info
+
+## Skill Metadata
+
+- **Name**: Medical Diagnosis Assistant (医疗诊断助手)
+- **Version**: 1.0.0
+- **Created**: 2026-02-28
+- **Author**: Medical AI Team
+- **License**: Educational/Research Use Only
+
+## Skill Overview
+
+AI-powered medical diagnosis assistant specialized in Allergic Rhinitis (AR).
+Features structured questionnaire, TNSS scoring, personalized treatment plans,
+and safety checks for contraindications.
+
+基于临床指南的过敏性鼻炎AI诊断助手，提供结构化问诊、TNSS评分、
+个性化治疗方案和用药安全检查。
+
+## Supported Conditions
+
+- ✅ Allergic Rhinitis (过敏性鼻炎)
+- 🔲 Asthma (计划中)
+- 🔲 Chronic Urticaria (计划中)
+
+## Key Features
+
+1. **Structured Questionnaire** - 系统化问诊树
+2. **TNSS Scoring** - 量化症状评分(0-12分)
+3. **Classification** - 分型分度(间歇/持续 × 轻/中/重)
+4. **Personalized Treatment** - 个性化阶梯治疗
+5. **Safety Checks** - 自动禁忌症筛查
+6. **Danger Detection** - 危险信号实时检测
+7. **Follow-up** - 用药随访与方案调整
+
+## Trigger Keywords
+
+### Primary Triggers (主触发词)
+```
+打喷嚏, 流鼻涕, 清水涕, 鼻痒, 鼻塞, 鼻炎, 过敏性鼻炎, 鼻敏感
+```
+
+### Special Population (特殊人群)
+```
+孕妇, 怀孕, 哺乳期, 儿童, 小孩, 老人
+```
+
+### Danger Signals (危险信号)
+```
+呼吸困难, 喘息, 胸闷, 面部肿胀, 高热不退
+```
+
+## File Structure
+
+```
+medical-diagnosis-skill/
+├── .skillinfo                      # 本文件
+├── SKILL.md                        # 主技能文档 (完整指南)
+├── README.md                       # 项目说明
+├── QUICKSTART.md                   # 快速入门
+├── scripts/
+│   └── ar_diagnosis.py             # Python诊断算法实现
+├── references/
+│   ├── medication_database.json    # 药物数据库
+│   └── contraindications.json      # 禁忌症规则
+└── examples/
+    └── conversation_examples.md    # 对话示例集
+```
+
+## Usage
+
+### For End Users
+```
+简单说出症状即可触发，例如:
+"我打喷嚏流鼻涕"
+"鼻炎怎么办"
+"我怀孕了鼻炎能用药吗"
+```
+
+### For Developers
+```bash
+# 测试诊断算法
+python3 scripts/ar_diagnosis.py
+
+# 查看完整文档
+cat SKILL.md
+
+# 查看对话示例
+cat examples/conversation_examples.md
+```
+
+## Clinical Guidelines
+
+Based on:
+- 中国过敏性鼻炎诊疗指南 (2022版)
+- ARIA Guidelines (Allergic Rhinitis and its Impact on Asthma)
+
+## Data Sources
+
+### Offline Cache
+- 近5年诊疗指南
+- 药品说明书
+- 顶刊文献(SCI 1区/2区)
+
+### Online Updates
+- PubMed
+- SinoMed (中国生物医学文献服务系统)
+- CNKI知网
+- 万方医学网
+- Cochrane Library
+- Web of Science
+
+## Safety & Ethics
+
+### Disclaimer
+⚠️ 本AI助手提供的建议仅供参考，不构成正式医疗诊断。
+如症状持续或加重，请及时就医。
+
+### Privacy
+- 问诊记录加密存储
+- 可追溯但不可篡改
+- 用户可随时查看/删除历史
+
+### Compliance
+- 明确标注"仅供参考"
+- 危险信号强制提示就医
+- 不替代医生诊断
+
+## Performance Metrics
+
+### Expected Performance
+- Diagnostic Accuracy: >85%
+- Questionnaire Rounds: 8-15
+- Response Time: <2s/round
+- User Satisfaction: >80%
+
+## Dependencies
+
+### Required
+- Python 3.7+
+- JSON support
+
+### Optional
+- PyPDF2 (for PDF knowledge base parsing)
+
+## Extension Points
+
+### Add New Disease
+1. Update `SKILL.md` - Add diagnostic logic
+2. Update `medication_database.json` - Add medications
+3. Update `contraindications.json` - Add safety rules
+4. Implement in `ar_diagnosis.py` - Add diagnostic class
+
+### Add New Medication
+Edit `references/medication_database.json`:
+```json
+{
+  "category": [{
+    "name": "药物名",
+    "dosage": {...},
+    "safety_profile": "..."
+  }]
+}
+```
+
+## Testing
+
+### Unit Tests
+```bash
+python3 scripts/ar_diagnosis.py
+```
+
+Expected output: 3 test cases (normal, pregnancy, danger)
+
+### Integration Tests
+Input various trigger phrases and verify:
+- ✅ Skill activation
+- ✅ Questionnaire flow
+- ✅ Scoring accuracy
+- ✅ Treatment plan generation
+- ✅ Safety checks
+
+## Known Limitations
+
+1. **Single Disease**: Currently only supports Allergic Rhinitis
+2. **Language**: Primarily Chinese (简体中文)
+3. **Age Range**: Best for adults; children require guardian
+4. **Complexity**: Complex cases may require referral
+
+## Roadmap
+
+### v1.1 (Q2 2026)
+- [ ] Add asthma support
+- [ ] Multi-language support (English)
+- [ ] Enhanced follow-up tracking
+
+### v2.0 (Q3 2026)
+- [ ] Chronic urticaria support
+- [ ] Allergic conjunctivitis
+- [ ] Drug-drug interaction database
+
+## Support & Contact
+
+### Documentation
+- Full guide: `SKILL.md`
+- Quick start: `QUICKSTART.md`
+- Examples: `examples/conversation_examples.md`
+
+### Issues
+Report bugs or suggest improvements via project repository.
+
+## License
+
+Educational and research use only.
+Clinical application requires approval from relevant medical institutions.
+
+---
+
+**Status**: ✅ Production Ready (v1.0)  
+**Last Updated**: 2026-02-28  
+**Maintainer**: Medical AI Team

@@ -1,0 +1,148 @@
+{
+  "nasal_corticosteroids": [
+    {
+      "name": "糠酸莫米松鼻喷剂",
+      "generic_name": "Mometasone Furoate",
+      "dosage": {
+        "adult": "每天1次，每侧鼻孔2喷",
+        "child": "3-11岁：每天1次，每侧鼻孔1喷"
+      },
+      "onset": "12-48小时",
+      "peak_effect": "1-2周",
+      "safety_profile": "孕妇B级，相对安全",
+      "price_range": "30-80元"
+    },
+    {
+      "name": "丙酸氟替卡松鼻喷剂",
+      "generic_name": "Fluticasone Propionate",
+      "dosage": {
+        "adult": "每天1-2次，每侧鼻孔1-2喷",
+        "child": "4岁以上：每天1次，每侧鼻孔1喷"
+      },
+      "onset": "12小时",
+      "peak_effect": "数天至1-2周",
+      "safety_profile": "孕妇C级",
+      "price_range": "40-100元"
+    },
+    {
+      "name": "布地奈德鼻喷剂",
+      "generic_name": "Budesonide",
+      "dosage": {
+        "adult": "每天1-2次，每侧鼻孔1-2喷",
+        "child": "6岁以上：每天1次，每侧鼻孔1喷"
+      },
+      "onset": "数小时至数天",
+      "peak_effect": "1-2周",
+      "safety_profile": "孕妇B级，哺乳期相对安全",
+      "price_range": "35-90元"
+    }
+  ],
+  "oral_antihistamines": [
+    {
+      "name": "氯雷他定片",
+      "generic_name": "Loratadine",
+      "dosage": {
+        "adult": "10mg 每天1次",
+        "child": "2-12岁体重≤30kg：5mg/天；>30kg：10mg/天"
+      },
+      "onset": "1-3小时",
+      "duration": "24小时",
+      "sedation": "无或轻微",
+      "pregnancy": "B级",
+      "price_range": "5-30元"
+    },
+    {
+      "name": "地氯雷他定片",
+      "generic_name": "Desloratadine",
+      "dosage": {
+        "adult": "5mg 每天1次",
+        "child": "6-11岁：2.5mg/天；≥12岁：5mg/天"
+      },
+      "onset": "1小时",
+      "duration": "24小时",
+      "sedation": "无",
+      "pregnancy": "C级",
+      "price_range": "15-50元"
+    },
+    {
+      "name": "西替利嗪片",
+      "generic_name": "Cetirizine",
+      "dosage": {
+        "adult": "10mg 每天1次",
+        "child": "2-5岁：5mg/天；≥6岁：10mg/天"
+      },
+      "onset": "1小时",
+      "duration": "24小时",
+      "sedation": "轻度",
+      "pregnancy": "B级",
+      "price_range": "10-35元"
+    },
+    {
+      "name": "左西替利嗪片",
+      "generic_name": "Levocetirizine",
+      "dosage": {
+        "adult": "5mg 每天1次（晚上）",
+        "child": "6岁以上：5mg/天"
+      },
+      "onset": "1小时",
+      "duration": "24小时",
+      "sedation": "轻微",
+      "pregnancy": "B级",
+      "price_range": "20-60元",
+      "special_note": "青光眼患者相对安全"
+    }
+  ],
+  "nasal_antihistamines": [
+    {
+      "name": "盐酸氮卓斯汀鼻喷剂",
+      "generic_name": "Azelastine",
+      "dosage": {
+        "adult": "每侧鼻孔1-2喷，每天2次",
+        "child": "5岁以上可用"
+      },
+      "onset": "15-30分钟",
+      "duration": "12小时",
+      "price_range": "50-100元"
+    }
+  ],
+  "leukotriene_antagonists": [
+    {
+      "name": "孟鲁司特钠",
+      "generic_name": "Montelukast",
+      "dosage": {
+        "adult": "10mg 每天1次（晚上）",
+        "child": "2-5岁：4mg/天；6-14岁：5mg/天"
+      },
+      "indication": "合并哮喘、咳嗽变异性哮喘、儿童",
+      "pregnancy": "B级",
+      "price_range": "30-80元"
+    }
+  ],
+  "decongestants": [
+    {
+      "name": "羟甲唑啉鼻喷剂",
+      "generic_name": "Oxymetazoline",
+      "dosage": {
+        "adult": "每侧鼻孔2-3滴或1-2喷，每天2-3次"
+      },
+      "max_duration": "3-5天",
+      "warning": "⚠️ 长期使用导致药物性鼻炎",
+      "contraindications": [
+        "青光眼",
+        "高血压（未控制）",
+        "甲状腺功能亢进"
+      ],
+      "price_range": "10-30元"
+    }
+  ],
+  "saline_irrigation": [
+    {
+      "name": "生理盐水/海盐水鼻腔冲洗",
+      "indication": "全人群适用，孕妇、儿童首选辅助",
+      "frequency": "每天2-3次",
+      "benefit": "物理清除过敏原、稀释分泌物、缓解鼻塞",
+      "safety": "无副作用",
+      "price_range": "20-60元"
+    }
+  ]
+}
