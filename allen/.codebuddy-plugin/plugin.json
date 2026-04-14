@@ -1,0 +1,10 @@
+{
+  "name": "allen",
+  "version": "1.0.0",
+  "description": "张小龙思维操作系统 - 基于演讲实录、饭否日记、专访等7份调研文件，提炼5个心智模型和8条决策启发式",
+  "author": {
+    "name": "MMDC Team",
+    "email": "whincwu@tencent.com"
+  },
+  "skills": "./"
+}
